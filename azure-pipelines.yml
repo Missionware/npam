@@ -37,7 +37,7 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: 'push'
-      packagesToPush: 'src\Npam\bin\Release\Missionware.Test2.Npam*.nupkg'
+      packagesToPush: 'src\Npam\bin\Release\Missionware.ThirdParty.Npam*.nupkg'
       nuGetFeedType: 'external'
       publishFeedCredentials: 'MwNugetOrg'
       arguments: '--skip-duplicate'
