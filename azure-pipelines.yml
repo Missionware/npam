@@ -1,0 +1,47 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+variables:
+  - group: VSMarketplace
+
+jobs:
+- job: Default
+  timeoutInMinutes: 360
+
+  pool:
+    vmImage: windows-latest
+
+  variables:
+    solution: 'Npam.sln'
+    buildConfiguration: 'Release'
+  
+  steps:
+  - checkout: self
+    persistCredentials: true
+    lfs: true
+
+  - task: NuGetCommand@2
+    inputs:
+      command: 'restore'
+      restoreSolution: $(solution)
+    displayName: 'Vsix - Nuget restore solution'
+
+  - task: VSBuild@1
+    inputs:
+      solution: $(solution)
+      configuration: $(buildConfiguration)
+    displayName: 'Vsix - Build solution'
+
+  - task: NuGetCommand@2
+    inputs:
+      command: 'push'
+      packagesToPush: 'src\Npam\bin\Release\Missionware.Test2.Npam*.nupkg'
+      nuGetFeedType: 'external'
+      publishFeedCredentials: 'MwNugetOrg'
+      arguments: '--skip-duplicate'
+    displayName: 'push to Nuget.org'
